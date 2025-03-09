@@ -31,6 +31,7 @@
 
 static TaskHandle_t xTaskHandle1 = NULL; // Handle for prvStartDefaultTask
 static TaskHandle_t xTaskHandle2 = NULL; // Handle for prvStartTask02
+static int buttonPressCount = 0;
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -239,6 +240,8 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 static void prvStartDefaultTask(void *argument);
 static void prvStartTask02(void *argument);
+static uint8_t AreAllLEDsOn(void);
+static void WinEffect(void);
 
 // Global Task Handles
 
@@ -259,80 +262,119 @@ static void prvStartDefaultTask(void *argument)
 }
 
 /* Task 2: Handles LED Sequence When Button is Pressed */
+
 static void prvStartTask02(void *argument)
 {
-  /* USER CODE BEGIN StartTask02 */
   for (;;)
   {
     if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0)) // Button Pressed
     {
         vTaskSuspend(xTaskHandle1); // Suspend Task 1 (Normal Blinking)
 
+        buttonPressCount++; // Increment button press count
+
         // Step 1: Turn all LEDs OFF
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
-        vTaskDelay(pdMS_TO_TICKS(50)); // Small delay before the sequence starts
 
-        // Step 2: Randomly set each LED ON or OFF
+        // Step 2: Set Each LED Based on Random OR Force ON if 3rd Press
         GPIO_PinState ledState;
 
-        // Green LED (GPIO_PIN_12)
-        for (int i = 0; i < 5; i++) // Loop 5 times
+        if (buttonPressCount == 3) // Force all LEDs ON on 3rd button press
         {
-            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12); // Toggle LED (ON if OFF, OFF if ON)
-            vTaskDelay(pdMS_TO_TICKS(10)); // Wait 500ms
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+            vTaskDelay(pdMS_TO_TICKS(500));
         }
-        ledState = (rand() % 2) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, ledState);
-        vTaskDelay(pdMS_TO_TICKS(50));
+        else
+        {
+        	for (int i = 0; i < 5; i++) // Loop 5 times
+        	        {
+        	            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12); // Toggle LED (ON if OFF, OFF if ON)
+        	            vTaskDelay(pdMS_TO_TICKS(10)); // Wait 500ms
+        	        }
+        	        ledState = (rand() % 2) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+        	        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, ledState);
+        	        vTaskDelay(pdMS_TO_TICKS(50));
 
-        // Orange LED (GPIO_PIN_13)
-        for (int i = 0; i < 5; i++) // Loop 5 times
-                {
-                    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13); // Toggle LED (ON if OFF, OFF if ON)
-                    vTaskDelay(pdMS_TO_TICKS(10)); // Wait 10ms
-                }
-        ledState = (rand() % 2) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, ledState);
-        vTaskDelay(pdMS_TO_TICKS(50));
+        	        // Orange LED (GPIO_PIN_13)
+        	        for (int i = 0; i < 5; i++) // Loop 5 times
+        	                {
+        	                    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13); // Toggle LED (ON if OFF, OFF if ON)
+        	                    vTaskDelay(pdMS_TO_TICKS(10)); // Wait 10ms
+        	                }
+        	        ledState = (rand() % 2) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+        	        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, ledState);
+        	        vTaskDelay(pdMS_TO_TICKS(50));
 
-        // Red LED (GPIO_PIN_14)
-        for (int i = 0; i < 5; i++) // Loop 5 times
-                {
-                    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14); // Toggle LED (ON if OFF, OFF if ON)
-                    vTaskDelay(pdMS_TO_TICKS(10)); // Wait 10ms
-                }
-        ledState = (rand() % 2) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, ledState);
-        vTaskDelay(pdMS_TO_TICKS(50));
+        	        // Red LED (GPIO_PIN_14)
+        	        for (int i = 0; i < 5; i++) // Loop 5 times
+        	                {
+        	                    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14); // Toggle LED (ON if OFF, OFF if ON)
+        	                    vTaskDelay(pdMS_TO_TICKS(10)); // Wait 10ms
+        	                }
+        	        ledState = (rand() % 2) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+        	        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, ledState);
+        	        vTaskDelay(pdMS_TO_TICKS(50));
 
-        // Blue LED (GPIO_PIN_15)
-        for (int i = 0; i < 5; i++) // Loop 5 times
-                {
-                    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15); // Toggle LED (ON if OFF, OFF if ON)
-                    vTaskDelay(pdMS_TO_TICKS(10)); // Wait 10ms
-                }
-        ledState = (rand() % 2) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, ledState);
-        vTaskDelay(pdMS_TO_TICKS(50));
+        	        // Blue LED (GPIO_PIN_15)
+        	        for (int i = 0; i < 5; i++) // Loop 5 times
+        	                {
+        	                    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15); // Toggle LED (ON if OFF, OFF if ON)
+        	                    vTaskDelay(pdMS_TO_TICKS(10)); // Wait 10ms
+        	                }
+        	        ledState = (rand() % 2) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+        	        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, ledState);
+        	        vTaskDelay(pdMS_TO_TICKS(50));
+        }
 
-        // Step 3: Display the outcome for 5 seconds
+        // Step 3: Check if all LEDs are ON (Trigger Win Effect)
+        if (AreAllLEDsOn())
+        {
+            WinEffect(); // Trigger Win Effect if all LEDs are ON
+            buttonPressCount = 0; // Reset count after win condition
+        }
+
+        // Step 4: Display outcome for 5 seconds
         vTaskDelay(pdMS_TO_TICKS(500));
-
+        //resets lights to off so that all lights are in the same state before switching states
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
-
         vTaskResume(xTaskHandle1); // Resume Task 1 (Normal Blinking)
     }
     vTaskDelay(pdMS_TO_TICKS(5)); // Small delay to prevent CPU overload
   }
-  /* USER CODE END StartTask02 */
-  vTaskDelete(NULL);
 }
+
+
+
+static uint8_t AreAllLEDsOn(void)
+{
+    return (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_12) == GPIO_PIN_SET &&
+            HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_13) == GPIO_PIN_SET &&
+            HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_14) == GPIO_PIN_SET &&
+            HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_15) == GPIO_PIN_SET);
+}
+
+static void WinEffect(void)
+{
+    for (int i = 0; i < 80; i++) // Flash LEDs 10 times
+    {
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+        vTaskDelay(pdMS_TO_TICKS(10)); // Fast flashing
+    }
+}
+
+
 
 
 /* USER CODE END 4 */
