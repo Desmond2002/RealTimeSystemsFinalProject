@@ -47,7 +47,13 @@ static void WinEffect(void);
 
 
 void initRandomSeed() {
-    srand(HAL_GetTick());  // Use system tick count as seed
+    uint32_t seed = 0;
+
+    while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET); // Wait for button release
+    while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET); // Wait for press
+
+    seed = HAL_GetTick();  // Capture tick count at button press
+    srand(seed); // Seed rand() with the unpredictable button press timing
 }
 
 
