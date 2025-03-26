@@ -123,7 +123,7 @@ int main(void) {
     /* MCU Configuration */
     HAL_Init();
     SystemClock_Config();
-    HAL_Delay(5000);
+    HAL_Delay(2000);
 
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
