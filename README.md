@@ -5,3 +5,8 @@ The develop pranch has the force to win case which causes a player to win every 
 In additon both use the first button press to pull the randomized seed and will wait for that interaction before they start. once the first button press is executedc to initiate the game play it will wait 2 seconds and then 
 enter its "waiting to play" state where it will remain untill the platter pulls the handle (presses the button). The system will cycle through its 2 states waiting for player and play state indefinatly unitll power is lost 
 or the system is reset. If either of the power is lost or the reset button is pressed the initial button press will be used once again to set the random seed and as in the beginning and the cycle will continue as described above.
+
+
+At this file path you can find the main file which is the file that will be run once the repository has been has been cloned.
+
+FreeRTOS_withBoard/MyOtherLab/Core/Src/main.c
