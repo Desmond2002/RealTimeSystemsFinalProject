@@ -58,7 +58,6 @@ void initRandomSeed() {
 
 
 
-
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 /* Priorities at which the tasks are created. */
@@ -123,12 +122,12 @@ int main(void) {
     /* MCU Configuration */
     HAL_Init();
     SystemClock_Config();
-    HAL_Delay(2000);
-
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
 
     initRandomSeed();
+    HAL_Delay(2000);
+
     /* Create the binary semaphore */
     xSemaphore = xSemaphoreCreateBinary();
     xSemaphoreGive(xSemaphore); // Initially allow normal blinking
@@ -344,6 +343,7 @@ static void WinEffect(void) {
         vTaskDelay(pdMS_TO_TICKS(10)); // Fast flashing
     }
 }
+
 
 
 
